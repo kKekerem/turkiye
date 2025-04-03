@@ -26,25 +26,15 @@ body {
     }
 }
 
-/* Navbar stilleri */
-nav ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    justify-content: center;
-    background-color: #333;
+/* Navbar için dropdown */
+nav {
+    text-align: center;
+    margin: 20px 0;
 }
 
-nav ul li {
-    margin: 0 15px;
-}
-
-nav ul li a {
-    color: #fff;
-    text-decoration: none;
-    padding: 15px 20px;
-    display: block;
+nav select {
+    padding: 10px;
+    font-size: 16px;
 }
 
 /* Hero bölgesi */
@@ -54,6 +44,25 @@ nav ul li a {
     background-color: #fff;
     margin: 20px;
     border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* Şehir içerikleri için animasyon */
+.city-content {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 1.5s forwards;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* Footer stilleri */
