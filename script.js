@@ -1,4 +1,4 @@
-// Sayfa yüklendiğinde basit animasyonlar çalışsın
+// Sayfa yüklendiğinde paragraflara animasyon ekleyelim
 document.addEventListener('DOMContentLoaded', () => {
     const paragraphs = document.querySelectorAll('p');
     paragraphs.forEach((p, index) => {
