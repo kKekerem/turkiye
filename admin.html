@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Admin Paneli</title>
+   <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+   <div id="login-section">
+      <h2>Admin Giriş</h2>
+      <input type="password" id="admin-password" placeholder="Şifre">
+      <button id="login-btn">Giriş Yap</button>
+      <p id="login-error" style="color:red; display:none;">Hatalı şifre!</p>
+   </div>
+
+   <div id="admin-panel" style="display:none;">
+      <h2>Admin Paneli</h2>
+      <h3>Yeni Şehir Ekle</h3>
+      <form id="new-city-form">
+         <input type="text" id="city-name" placeholder="Şehir Adı" required>
+         <textarea id="city-html" placeholder="HTML İçeriği" required></textarea>
+         <textarea id="city-css" placeholder="CSS İçeriği" required></textarea>
+         <button type="submit">Yeni Şehir Ekle</button>
+      </form>
+      <hr>
+      <h3>Mevcut Şehri Güncelle</h3>
+      <form id="update-city-form">
+         <input type="text" id="update-city-name" placeholder="Şehir Adı" required>
+         <textarea id="update-city-html" placeholder="Yeni HTML İçeriği"></textarea>
+         <textarea id="update-city-css" placeholder="Yeni CSS İçeriği"></textarea>
+         <button type="submit">Güncelle</button>
+      </form>
+      <div id="admin-message"></div>
+   </div>
+
+   <script>
+      // Admin panel şifresi (örnek: "admin123")
+      const correctPassword = "admin123";
+      // GitHub API için gerekli bilgiler (kendi hesabınıza göre ayarlayın)
+      const token = "YOUR_GITHUB_TOKEN"; // GitHub tokeninizi buraya ekleyin
+      const owner = "YOUR_GITHUB_USERNAME";
+      const repo = "turkiye-iller"; // Repository adınız
+      const branch = "main";
+
+      // Şifre kontrolü
+      document.getElementById("login-btn").addEventListener("click", function(){
+         const inputPassword = document.getElementById("admin-password").value;
+         if(inputPassword === correctPassword){
+            document.getElementById("login-section").style.display = "none";
+            document.getElementById("admin-panel").style.display = "block";
+         } else {
+            document.getElementById("login-error").style.display = "block";
+         }
+      });
+
+      // GitHub API ile dosya oluşturma/güncelleme fonksiyonu
+      async function updateFile(path, content, message) {
+         const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
+         let sha = "";
+         // Dosyanın var olup olmadığını kontrol et
+         try {
+            const res = await fetch(apiUrl + `?ref=${branch}`, {
+               headers: {
+                  "Authorization": "token " + token,
+                  "Accept": "application/vnd.github.v3+json"
+               }
+            });
+            if(res.ok) {
+               const data = await res.json();
+               sha = data.sha;
+            }
+         } catch (err) {
+            console.log("Dosya mevcut değil, yeni oluşturulacak.");
+         }
+         // İçeriği base64 formatına çevir
+         const encodedContent = btoa(content);
+         const bodyData = {
+            message: message,
+            content: encodedContent,
+            branch: branch
+         };
+         if(sha) {
+            bodyData.sha = sha;
+         }
+         const response = await fetch(apiUrl, {
+            method: "PUT",
+            headers: {
+               "Authorization": "token " + token,
+               "Accept": "application/vnd.github.v3+json",
+               "Content-Type": "application/json"
+            },
+            body: JSON.stringify(bodyData)
+         });
+         return response.json();
+      }
+
+      // Yeni şehir ekleme formu submit işlemi
+      document.getElementById("new-city-form").addEventListener("submit", async function(e){
+         e.preventDefault();
+         const cityName = document.getElementById("city-name").value.trim();
+         const cityHtml = document.getElementById("city-html").value;
+         const cityCss = document.getElementById("city-css").value;
+         if(cityName === "" || cityHtml === "" || cityCss === "") {
+            alert("Tüm alanları doldurun.");
+            return;
+         }
+         const htmlPath = `provinces/${cityName.toLowerCase()}.html`;
+         const cssPath = `provinces/${cityName.toLowerCase()}.css`;
+         await updateFile(htmlPath, cityHtml, `Yeni ${cityName} sayfası eklendi`);
+         await updateFile(cssPath, cityCss, `Yeni ${cityName} CSS dosyası eklendi`);
+         document.getElementById("admin-message").innerText = "Yeni şehir eklendi.";
+      });
+
+      // Mevcut şehir güncelleme formu submit işlemi
+      document.getElementById("update-city-form").addEventListener("submit", async function(e){
+         e.preventDefault();
+         const cityName = document.getElementById("update-city-name").value.trim();
+         const cityHtml = document.getElementById("update-city-html").value;
+         const cityCss = document.getElementById("update-city-css").value;
+         if(cityName === "") {
+            alert("Şehir adını girin.");
+            return;
+         }
+         if(cityHtml !== ""){
+            const htmlPath = `provinces/${cityName.toLowerCase()}.html`;
+            await updateFile(htmlPath, cityHtml, `${cityName} HTML dosyası güncellendi`);
+         }
+         if(cityCss !== ""){
+            const cssPath = `provinces/${cityName.toLowerCase()}.css`;
+            await updateFile(cssPath, cityCss, `${cityName} CSS dosyası güncellendi`);
+         }
+         document.getElementById("admin-message").innerText = "Şehir güncellendi.";
+      });
+   </script>
+</body>
+</html>
