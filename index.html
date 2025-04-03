@@ -1,30 +1,48 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Türkiye İlleri</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Türkiye İlleri</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <header class="animated-header">
-        <h1>Türkiye İlleri</h1>
-    </header>
-    <nav>
-        <ul>
-            <li><a href="provinces/adana.html">Adana</a></li>
-            <li><a href="provinces/ankara.html">Ankara</a></li>
-            <li><a href="provinces/istanbul.html">İstanbul</a></li>
-            <!-- Diğer iller buraya eklenebilir -->
-        </ul>
-    </nav>
-    <section class="hero">
-        <h2>Türkiye'nin güzelliklerini keşfedin</h2>
-        <p>Her ilin kendine özgü kültürü ve tarihi burada sizleri bekliyor.</p>
-    </section>
-    <footer>
-        <p>Türkiye İlleri Web Sitesi &copy; 2025</p>
-    </footer>
-    <script src="script.js"></script>
+  <header class="animated-header">
+      <h1>Türkiye İlleri</h1>
+  </header>
+  <nav>
+      <select id="city-select" onchange="if(this.value) { window.location.href = this.value; }">
+          <option value="">Şehir Seçin</option>
+      </select>
+  </nav>
+  <section class="hero">
+      <h2>Türkiye'nin güzelliklerini keşfedin</h2>
+      <p>Her ilin kendine özgü kültürü ve tarihi burada sizleri bekliyor.</p>
+  </section>
+  <footer>
+      <p>Türkiye İlleri Web Sitesi &copy; 2025</p>
+  </footer>
+  <script>
+      // 81 il listesi
+      const cities = [
+          "Adana", "Adıyaman", "Afyonkarahisar", "Ağrı", "Amasya", "Ankara", "Antalya", "Artvin", "Aydın", "Balıkesir", 
+          "Bilecik", "Bingöl", "Bitlis", "Bolu", "Burdur", "Bursa", "Çanakkale", "Çankırı", "Çorum", "Denizli", 
+          "Diyarbakır", "Edirne", "Elazığ", "Erzincan", "Erzurum", "Eskişehir", "Gaziantep", "Giresun", "Gümüşhane", "Hakkari",
+          "Hatay", "Isparta", "Mersin", "İstanbul", "İzmir", "Kars", "Kastamonu", "Kayseri", "Kırklareli", "Kırşehir",
+          "Kocaeli", "Konya", "Kütahya", "Malatya", "Manisa", "Kahramanmaraş", "Mardin", "Muğla", "Muş", "Nevşehir",
+          "Niğde", "Ordu", "Rize", "Sakarya", "Samsun", "Siirt", "Sinop", "Sivas", "Tekirdağ", "Tokat", 
+          "Trabzon", "Tunceli", "Şanlıurfa", "Uşak", "Van", "Yozgat", "Zonguldak", "Aksaray", "Bayburt", "Karaman", "Kırıkkale", 
+          "Batman", "Şırnak", "Bartın", "Ardahan", "Iğdır", "Yalova", "Karabük", "Kilis", "Osmaniye", "Düzce"
+      ];
+
+      const select = document.getElementById("city-select");
+      cities.forEach(city => {
+          const option = document.createElement("option");
+          option.value = "provinces/" + city.toLowerCase() + ".html";
+          option.textContent = city;
+          select.appendChild(option);
+      });
+  </script>
+  <script src="script.js"></script>
 </body>
 </html>
