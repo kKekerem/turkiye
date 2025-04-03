@@ -16,14 +16,15 @@
 
    <div id="admin-panel" style="display:none;">
       <h2>Admin Paneli</h2>
+      <!-- Yeni Şehir Ekleme -->
       <h3>Yeni Şehir Ekle</h3>
       <form id="new-city-form">
          <input type="text" id="city-name" placeholder="Şehir Adı" required>
-         <textarea id="city-html" placeholder="HTML İçeriği" required></textarea>
-         <textarea id="city-css" placeholder="CSS İçeriği" required></textarea>
+         <textarea id="city-content" placeholder="Şehir İçeriği" required></textarea>
          <button type="submit">Yeni Şehir Ekle</button>
       </form>
       <hr>
+      <!-- Mevcut Şehri Güncelleme -->
       <h3>Mevcut Şehri Güncelle</h3>
       <form id="update-city-form">
          <input type="text" id="update-city-name" placeholder="Şehir Adı" required>
@@ -95,20 +96,54 @@
          return response.json();
       }
 
-      // Yeni şehir ekleme formu submit işlemi
-      document.getElementById("new-city-form").addEventListener("submit", async function(e){
+      // Yeni şehir ekleme formu submit işlemi (otomatik HTML ve varsayılan CSS oluşturacak)
+      document.getElementById("new-city-form").addEventListener("submit", async function(e) {
          e.preventDefault();
          const cityName = document.getElementById("city-name").value.trim();
-         const cityHtml = document.getElementById("city-html").value;
-         const cityCss = document.getElementById("city-css").value;
-         if(cityName === "" || cityHtml === "" || cityCss === "") {
+         const cityContent = document.getElementById("city-content").value;
+         if (cityName === "" || cityContent === "") {
             alert("Tüm alanları doldurun.");
             return;
          }
+         
+         // Otomatik oluşturulan HTML şablonu
+         const defaultHtml = `
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${cityName} - Türkiye İlleri</title>
+    <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+    <header class="animated-header">
+        <h1>${cityName}</h1>
+    </header>
+    <section class="city-content">
+        <p>${cityContent}</p>
+    </section>
+    <footer>
+        <p>Türkiye İlleri Web Sitesi &copy; 2025</p>
+    </footer>
+    <script src="../script.js"></script>
+</body>
+</html>
+`;
+         // Varsayılan CSS şablonu
+         const defaultCss = `/* Default CSS for ${cityName} */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}`;
          const htmlPath = `provinces/${cityName.toLowerCase()}.html`;
          const cssPath = `provinces/${cityName.toLowerCase()}.css`;
-         await updateFile(htmlPath, cityHtml, `Yeni ${cityName} sayfası eklendi`);
-         await updateFile(cssPath, cityCss, `Yeni ${cityName} CSS dosyası eklendi`);
+         
+         // GitHub API ile dosyaları oluşturuyoruz
+         await updateFile(htmlPath, defaultHtml, `Yeni ${cityName} sayfası eklendi`);
+         await updateFile(cssPath, defaultCss, `Yeni ${cityName} CSS dosyası eklendi`);
+         
          document.getElementById("admin-message").innerText = "Yeni şehir eklendi.";
       });
 
